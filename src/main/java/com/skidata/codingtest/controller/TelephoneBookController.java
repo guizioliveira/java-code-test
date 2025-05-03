@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import com.skidata.codingtest.entity.Person;
@@ -57,8 +58,9 @@ public class TelephoneBookController {
 	}
 
 	@DeleteMapping("/person/{id}/delete")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	void deletePerson(@PathVariable String id) {
-		// TODO
+		telephoneBookService.deletePersonById(UUID.fromString(id));
 	}
 
 	@DeleteMapping("/person/{id}/telephone/{telephoneId}/delete")

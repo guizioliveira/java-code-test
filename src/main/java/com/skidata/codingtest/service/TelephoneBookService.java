@@ -5,12 +5,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.skidata.codingtest.entity.Person;
 import com.skidata.codingtest.entity.Telephone;
 import com.skidata.codingtest.repository.PersonRepository;
 import com.skidata.codingtest.repository.TelephoneRepository;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class TelephoneBookService {
@@ -41,6 +43,16 @@ public class TelephoneBookService {
 
 	public void deletePerson(Person person) {
 		personRepository.delete(person);
+	}
+
+	public void deletePersonById(UUID personId) {
+		Person person = personRepository.findById(personId)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		deletePerson(person);
+	}
+
+	public void deleteTelephone(UUID personId, UUID telephoneId) {
+
 	}
 
 	public Person addTelephone(UUID personId, Telephone telephone) {

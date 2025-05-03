@@ -51,7 +51,7 @@ class TelephoneBookServiceTest {
 	}
 
 	@Test
-	void savePersonWithTelefon() {
+	void savePersonWithTelephone() {
 		Person person = new Person(FIRSTNAME, LASTNAME);
 		person = target.savePerson(person);
 		Telephone telephone = new Telephone("AT", "123456789");
