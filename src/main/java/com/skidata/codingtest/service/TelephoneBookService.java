@@ -26,11 +26,14 @@ public class TelephoneBookService {
 	}
 
 	public Person findByFirstName(String firstName) {
-		return personRepository.findByFirstName(firstName);
+		return personRepository.findByFirstName(firstName).orElseThrow(() ->
+			new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found")
+		);
 	}
 
 	public Person findByLastName(String lastName) {
-		return personRepository.findByLastName(lastName);
+		return personRepository.findByLastName(lastName)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found"));
 	}
 
 	public List<Person> findPersonByPhoneNumber(String phoneNumber) {
@@ -49,7 +52,7 @@ public class TelephoneBookService {
 
 				return personRepository.save(person);
 			}
-		).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found"));
 	}
 
 	public void deletePerson(Person person) {
@@ -58,16 +61,16 @@ public class TelephoneBookService {
 
 	public void deletePersonById(UUID personId) {
 		Person person = personRepository.findById(personId)
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found"));
 		deletePerson(person);
 	}
 
 	public void deletePersonTelephone(UUID personId, UUID telephoneId) {
 		Person person = personRepository.findById(personId)
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found"));
 
 		Telephone telephone = person.getTelephones().stream().filter(phone -> phone.getId().equals(telephoneId))
-			.findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+			.findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Telephone not found"));
 
 		person.getTelephones().remove(telephone);
 		personRepository.save(person);
