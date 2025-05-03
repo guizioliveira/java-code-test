@@ -51,8 +51,15 @@ public class TelephoneBookService {
 		deletePerson(person);
 	}
 
-	public void deleteTelephone(UUID personId, UUID telephoneId) {
+	public void deletePersonTelephone(UUID personId, UUID telephoneId) {
+		Person person = personRepository.findById(personId)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
+		Telephone telephone = person.getTelephones().stream().filter(phone -> phone.getId().equals(telephoneId))
+			.findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+		person.getTelephones().remove(telephone);
+		personRepository.save(person);
 	}
 
 	public Person addTelephone(UUID personId, Telephone telephone) {

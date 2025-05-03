@@ -64,8 +64,9 @@ public class TelephoneBookController {
 	}
 
 	@DeleteMapping("/person/{id}/telephone/{telephoneId}/delete")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	void deletePersonTelephone(@PathVariable String id, @PathVariable String telephoneId) {
-		// TODO
+		telephoneBookService.deletePersonTelephone(UUID.fromString(id), UUID.fromString(telephoneId));
 	}
 
 }
