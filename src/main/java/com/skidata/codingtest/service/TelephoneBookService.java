@@ -1,7 +1,6 @@
 package com.skidata.codingtest.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,15 +76,11 @@ public class TelephoneBookService {
 	}
 
 	public Person addTelephone(UUID personId, Telephone telephone) {
-		Optional<Person> op = personRepository.findById(personId);
-		if (op.isPresent()) {
-			Person p = op.get();
-			p.getTelephones().add(telephone);
-			personRepository.save(p);
-			return p;
-		}
-		// TODO Add Exception
-		return null;
+		Person person = personRepository.findById(personId)
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found"));
+
+		person.getTelephones().add(telephone);
+		return personRepository.save(person);
 	}
 
 }
