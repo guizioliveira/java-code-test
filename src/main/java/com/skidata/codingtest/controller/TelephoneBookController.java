@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +43,12 @@ public class TelephoneBookController {
 	@GetMapping("/person/findByNumber/{phoneNumber}")
 	List<Person> findPersonByPhoneNumber(@PathVariable String phoneNumber) {
 		return telephoneBookService.findPersonByPhoneNumber(phoneNumber);
+	}
+
+	@GetMapping("/person/search")
+	Page<Person> searchPerson(@RequestParam("query") String query,
+		@PageableDefault(size = 20) Pageable pageable) {
+		return telephoneBookService.findPersonByQuery(query, pageable);
 	}
 
 	@PostMapping("/person")

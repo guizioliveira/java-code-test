@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,10 @@ public class TelephoneBookService {
 		return personRepository.findByPhone(phoneNumber);
 	}
 
+	public Page<Person> findPersonByQuery(String query, Pageable pageable) {
+		return personRepository.findByQuery(query, pageable);
+	}
+
 	public Person savePerson(Person person) {
 		return personRepository.save(person);
 	}
@@ -51,6 +57,7 @@ public class TelephoneBookService {
 
 				return personRepository.save(person);
 			}
+
 		).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found"));
 	}
 
@@ -68,8 +75,10 @@ public class TelephoneBookService {
 		Person person = personRepository.findById(personId)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found"));
 
-		Telephone telephone = person.getTelephones().stream().filter(phone -> phone.getId().equals(telephoneId))
-			.findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Telephone not found"));
+		Telephone telephone = person.getTelephones().stream()
+			.filter(phone -> phone.getId().equals(telephoneId))
+			.findFirst()
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Telephone not found"));
 
 		person.getTelephones().remove(telephone);
 		personRepository.save(person);
