@@ -49,7 +49,7 @@ public class TelephoneBookController {
 
 	@PutMapping("/person/{id}")
 	Person updatePerson(@PathVariable String id, @RequestBody Person person) {
-		return null; // TODO
+		return telephoneBookService.updatePerson(UUID.fromString(id), person);
 	}
 
 	@PutMapping("/person/{id}/telephone")

@@ -41,6 +41,17 @@ public class TelephoneBookService {
 		return personRepository.save(person);
 	}
 
+	public Person updatePerson(UUID personId, Person newData) {
+		return personRepository.findById(personId).map(
+			person -> {
+				person.setFirstName(newData.getFirstName());
+				person.setLastName(newData.getLastName());
+
+				return personRepository.save(person);
+			}
+		).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+	}
+
 	public void deletePerson(Person person) {
 		personRepository.delete(person);
 	}
