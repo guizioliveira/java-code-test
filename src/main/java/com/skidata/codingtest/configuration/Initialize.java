@@ -10,10 +10,13 @@ public class Initialize {
 
 	@Autowired
 	PersonInitializer persinit;
+	@Autowired
+	UserInitializer usrinit;
 
 	@PostConstruct
 	void init() {
 		persinit.init();
+		usrinit.init();
 	}
 
 }
