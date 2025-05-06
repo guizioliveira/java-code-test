@@ -45,13 +45,13 @@ For Insomnia the file `Insomnia_codingtest.json` in the root folder of the proje
 
 - [x] The REST calls for update and delete are existing in the controller but are missing their implementation.
   Implementation needs to be done.
-- [ ] Currently, it is possible to search by first or last name or phoneNumber. In addition, there should be one find
+- [x] Currently, it is possible to search by first or last name or phoneNumber. In addition, there should be one find
   method that searches all three fields at once.
-- [ ] The new find method should be case-insensitive and be able to find persons when only a part of the names or
+- [x] The new find method should be case-insensitive and be able to find persons when only a part of the names or
   numbers are entered.
 - [x] There is a method to add a telephone number to a person. This works if the person with the given UUID exists. If
   the person does not exist it still returns HTTP 200 without content. This should be changed to return HTTP 404 with an
   error-message that the Person wasn't found.
 - [x] A method to remove a phone number by its ID from a Person exists in the controller and needs to be implemented.
-- [ ] Additionally, you can always point out changes that you would make to improve the existing code.
-- [ ] Bonus: Add basic HTTP-Auth to the calls so only a given authorized user can view/edit the data.
+- [x] Additionally, you can always point out changes that you would make to improve the existing code.
+- [x] Bonus: Add basic HTTP-Auth to the calls so only a given authorized user can view/edit the data.
