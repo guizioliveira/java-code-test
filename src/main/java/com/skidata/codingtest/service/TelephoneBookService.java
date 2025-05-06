@@ -3,6 +3,10 @@ package com.skidata.codingtest.service;
 import java.util.List;
 import java.util.UUID;
 
+import com.skidata.codingtest.dto.PersonCreateDTO;
+import com.skidata.codingtest.dto.PersonDTO;
+import com.skidata.codingtest.dto.TelephoneCreateDTO;
+import com.skidata.codingtest.mapper.PersonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,44 +25,55 @@ public class TelephoneBookService {
 	private PersonRepository personRepository;
 	@Autowired
 	private TelephoneRepository telephoneRepository;
+	@Autowired
+	PersonMapper personMapper;
 
-	public List<Person> findAll() {
-		return personRepository.findAll();
+	public List<PersonDTO> findAll() {
+		return personMapper.toDtoList(personRepository.findAll());
 	}
 
-	public Person findByFirstName(String firstName) {
-		return personRepository.findByFirstName(firstName).orElseThrow(() ->
+	public PersonDTO findByFirstName(String firstName) {
+		Person p = personRepository.findByFirstName(firstName).orElseThrow(() ->
 			new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found")
 		);
+
+		return personMapper.toDto(p);
 	}
 
-	public Person findByLastName(String lastName) {
-		return personRepository.findByLastName(lastName)
+	public PersonDTO findByLastName(String lastName) {
+		Person p = personRepository.findByLastName(lastName)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found"));
+
+		return personMapper.toDto(p);
 	}
 
-	public List<Person> findPersonByPhoneNumber(String phoneNumber) {
-		return personRepository.findByPhone(phoneNumber);
+	public List<PersonDTO> findPersonByPhoneNumber(String phoneNumber) {
+		return personMapper.toDtoList(personRepository.findByPhone(phoneNumber));
 	}
 
-	public Page<Person> findPersonByQuery(String query, Pageable pageable) {
-		return personRepository.findByQuery(query, pageable);
+	public Page<PersonDTO> findPersonByQuery(String query, Pageable pageable) {
+		return personRepository.findByQuery(query, pageable).map(personMapper::toDto);
 	}
 
-	public Person savePerson(Person person) {
-		return personRepository.save(person);
+	public PersonDTO savePerson(PersonCreateDTO person) {
+		Person entity = new Person(person.firstName(), person.lastName());
+		Person savedPerson = personRepository.save(entity);
+
+		return personMapper.toDto(savedPerson);
 	}
 
-	public Person updatePerson(UUID personId, Person newData) {
-		return personRepository.findById(personId).map(
-			person -> {
-				person.setFirstName(newData.getFirstName());
-				person.setLastName(newData.getLastName());
+	public PersonDTO updatePerson(UUID personId, PersonCreateDTO newData) {
+		Person updated = personRepository.findById(personId).map(
+				person -> {
+					person.setFirstName(newData.firstName());
+					person.setLastName(newData.lastName());
+					return personRepository.save(person);
+				})
+			.orElseThrow(() ->
+				new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found")
+			);
 
-				return personRepository.save(person);
-			}
-
-		).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found"));
+		return personMapper.toDto(updated);
 	}
 
 	public void deletePerson(Person person) {
@@ -66,9 +81,22 @@ public class TelephoneBookService {
 	}
 
 	public void deletePersonById(UUID personId) {
+		if (!personRepository.existsById(personId)) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found");
+		}
+
+		personRepository.deleteById(personId);
+	}
+
+	public PersonDTO addTelephone(UUID personId, TelephoneCreateDTO telephone) {
 		Person person = personRepository.findById(personId)
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found"));
-		deletePerson(person);
+
+		Telephone tel = new Telephone(telephone.countryCode(), telephone.number());
+		person.getTelephones().add(tel);
+
+		Person updated = personRepository.save(person);
+		return personMapper.toDto(updated);
 	}
 
 	public void deletePersonTelephone(UUID personId, UUID telephoneId) {
@@ -82,14 +110,6 @@ public class TelephoneBookService {
 
 		person.getTelephones().remove(telephone);
 		personRepository.save(person);
-	}
-
-	public Person addTelephone(UUID personId, Telephone telephone) {
-		Person person = personRepository.findById(personId)
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found"));
-
-		person.getTelephones().add(telephone);
-		return personRepository.save(person);
 	}
 
 }
