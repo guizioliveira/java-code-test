@@ -8,8 +8,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-
 @Transactional
 @Component
 public class UserInitializer {
@@ -20,5 +18,9 @@ public class UserInitializer {
 	public void init() {
 		User user = new User("admin", new BCryptPasswordEncoder().encode("password"), Role.ADMIN);
 		userRepository.save(user);
+		userRepository.save(
+			new User("max", new BCryptPasswordEncoder().encode("1234567"), Role.USER)
+		);
 	}
+
 }
