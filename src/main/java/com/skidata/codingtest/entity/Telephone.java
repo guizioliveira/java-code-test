@@ -16,7 +16,7 @@ public class Telephone {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
 
-	private String countyCode;
+	private String countryCode;
 
 	private String number;
 
@@ -24,7 +24,7 @@ public class Telephone {
 	}
 
 	public Telephone(String countryCode, String number) {
-		this.countyCode = countryCode;
+		this.countryCode = countryCode;
 		this.number = number;
 	}
 }
